@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AV Tweks — Optimización de PC para juegos competitivos</title>
+<meta name="description" content="AV Tweks: optimización básica y avanzada de PC, limpieza de Windows y BIOS para gaming competitivo. Más de 4 años de experiencia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000000;
+    --bg-panel:#0c0c0d;
+    --bg-panel-2:#121213;
+    --line:#222223;
+    --line-soft:#19191a;
+    --text:#eae7e0;
+    --text-muted:#93929a;
+    --text-dim:#65646a;
+    --copper:#c17d45;
+    --copper-light:#e2a468;
+    --copper-dim:#8a5c34;
+    --gold:#d9b46a;
+    --green:#6fae7a;
+    --shadow: 0 20px 60px -20px rgba(0,0,0,.8);
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background-image:
+      linear-gradient(rgba(193,125,69,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(193,125,69,.03) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 0%, transparent 70%);
+  }
+
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%;display:block;}
+
+  .container{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 28px;
+    position:relative;
+    z-index:1;
+  }
+
+  section{scroll-margin-top:88px;}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.72rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--copper-light);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:22px;
+    height:1px;
+    background:var(--copper);
+    display:inline-block;
+  }
+
+  h1,h2,h3{
+    font-family:var(--serif);
+    font-weight:600;
+    line-height:1.08;
+    letter-spacing:-.01em;
+  }
+
+  .section-title{
+    font-size:clamp(1.8rem, 3.4vw, 2.6rem);
+    font-weight:600;
+    margin-bottom:14px;
+    color:var(--text);
+  }
+  .section-sub{
+    color:var(--text-muted);
+    max-width:560px;
+    font-size:1.02rem;
+  }
+  .section-head{margin-bottom:52px;}
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .8s cubic-bezier(.19,1,.22,1), transform .8s cubic-bezier(.19,1,.22,1);
+  }
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+  .reveal-delay-1.in-view{transition-delay:.08s;}
+  .reveal-delay-2.in-view{transition-delay:.16s;}
+  .reveal-delay-3.in-view{transition-delay:.24s;}
+  .reveal-delay-4.in-view{transition-delay:.32s;}
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1;transform:none;transition:none;}
+    *{animation-duration:.001s !important;}
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:fixed;
+    top:0;left:0;right:0;
+    z-index:100;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:76px;
+  }
+  .logo{
+    font-family:var(--serif);
+    font-size:1.4rem;
+    font-weight:700;
+    letter-spacing:.01em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo-mark{
+    width:34px;height:34px;
+    border:1px solid var(--copper);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);
+    font-size:.85rem;
+    color:var(--copper-light);
+    font-weight:600;
+    flex-shrink:0;
+  }
+  .logo span{color:var(--copper-light);}
+
+  nav ul{
+    display:flex;
+    gap:32px;
+    font-size:.92rem;
+    color:var(--text-muted);
+  }
+  nav ul li a{
+    position:relative;
+    padding:6px 0;
+    transition:color .25s;
+  }
+  nav ul li a:hover{color:var(--text);}
+  nav ul li a::after{
+    content:'';
+    position:absolute;
+    left:0;bottom:0;
+    width:0%;height:1px;
+    background:var(--copper-light);
+    transition:width .3s ease;
+  }
+  nav ul li a:hover::after{width:100%;}
+
+  .nav-right{display:flex;align-items:center;gap:18px;}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    padding:12px 22px;
+    border-radius:7px;
+    font-size:.9rem;
+    font-weight:600;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:transform .25s ease, box-shadow .25s ease, background .25s ease, border-color .25s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:linear-gradient(160deg, var(--copper-light), var(--copper-dim));
+    color:#120c07;
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 28px -10px rgba(193,125,69,.55);
+  }
+  .btn-ghost{
+    border-color:var(--line);
+    color:var(--text);
+    background:transparent;
+  }
+  .btn-ghost:hover{
+    border-color:var(--copper);
+    background:rgba(193,125,69,.06);
+  }
+  .btn-sm{padding:9px 16px;font-size:.82rem;}
+
+  .menu-toggle{
+    display:none;
+    width:38px;height:38px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:transparent;
+    color:var(--text);
+    align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .menu-toggle svg{width:18px;height:18px;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding-top:170px;
+    padding-bottom:100px;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    gap:60px;
+    align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 5vw, 3.6rem);
+    color:var(--text);
+    margin-bottom:22px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--copper-light);
+  }
+  .hero p.lead{
+    font-size:1.08rem;
+    color:var(--text-muted);
+    max-width:480px;
+    margin-bottom:34px;
+  }
+  .hero-ctas{
+    display:flex;
+    gap:16px;
+    margin-bottom:46px;
+    flex-wrap:wrap;
+  }
+
+  .trust-strip{
+    display:flex;
+    gap:30px;
+    flex-wrap:wrap;
+    border-top:1px solid var(--line-soft);
+    padding-top:26px;
+  }
+  .trust-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:.85rem;
+    color:var(--text-muted);
+  }
+  .trust-item svg{width:16px;height:16px;color:var(--copper-light);flex-shrink:0;}
+
+  /* ---------- terminal panel (signature element) ---------- */
+  .terminal{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+  .terminal::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg, transparent 0%, transparent 92%, rgba(193,125,69,.06) 100%);
+    pointer-events:none;
+  }
+  .terminal-bar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg-panel-2);
+  }
+  .terminal-dot{width:10px;height:10px;border-radius:50%;}
+  .terminal-dot:nth-child(1){background:#e0685c;}
+  .terminal-dot:nth-child(2){background:#e0b45c;}
+  .terminal-dot:nth-child(3){background:#6fae7a;}
+  .terminal-title{
+    font-family:var(--mono);
+    font-size:.74rem;
+    color:var(--text-dim);
+    margin-left:8px;
+    letter-spacing:.04em;
+  }
+  .terminal-body{
+    padding:24px 22px;
+    font-family:var(--mono);
+    font-size:.84rem;
+    min-height:230px;
+  }
+  .term-line{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+    color:var(--text-muted);
+    opacity:0;
+  }
+  .term-line.shown{opacity:1;}
+  .term-line .prompt{color:var(--copper-light);flex-shrink:0;}
+  .term-line .ok{color:var(--green);}
+  .cursor{
+    display:inline-block;
+    width:7px;height:14px;
+    background:var(--copper-light);
+    animation:blink 1s steps(1) infinite;
+    vertical-align:middle;
+    margin-left:2px;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  .fps-compare{
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px dashed var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .fps-block{text-align:center;}
+  .fps-num{
+    font-family:var(--mono);
+    font-size:1.7rem;
+    font-weight:600;
+    color:var(--text-dim);
+  }
+  .fps-block.after .fps-num{color:var(--copper-light);}
+  .fps-label{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-top:4px;}
+  .fps-arrow{color:var(--copper);font-size:1.2rem;}
+
+  /* ---------- app / optimizer product ---------- */
+  .app-section{padding:100px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);}
+  .app-head{
+    max-width:640px;
+    margin:0 auto 50px;
+    text-align:center;
+  }
+  .app-head .eyebrow{justify-content:center;}
+  .app-lead{max-width:100%;margin:0 auto 30px;}
+  .app-features{
+    list-style:none;
+    display:inline-flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+    margin:0 auto 32px;
+    text-align:left;
+  }
+  .app-features li{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:.92rem;
+    color:var(--text);
+  }
+  .app-features li svg{
+    width:18px;height:18px;
+    color:var(--copper-light);
+    flex-shrink:0;
+  }
+  .app-price{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    padding:22px 24px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    text-align:left;
+  }
+  .app-price-num{
+    font-family:var(--serif);
+    font-size:1.8rem;
+    font-weight:600;
+    color:var(--copper-light);
+  }
+  .app-price-note{
+    font-size:.78rem;
+    color:var(--text-dim);
+    margin-top:2px;
+  }
+
+  .app-shots{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+  }
+  .app-shot{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .app-shot img{width:100%;display:block;}
+  .app-mock-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg-panel-2);
+  }
+  .app-mock-logo{
+    width:24px;height:24px;
+    border-radius:6px;
+    background:linear-gradient(160deg, var(--copper-light), var(--copper-dim));
+    color:#120c07;
+    font-family:var(--mono);
+    font-size:.68rem;
+    font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ---------- services ---------- */
+  .services{padding:110px 0;}
+  .card-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:22px;
+  }
+  .card{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:30px 26px;
+    transition:transform .35s cubic-bezier(.19,1,.22,1), border-color .35s, box-shadow .35s;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::after{
+    content:'';
+    position:absolute;
+    top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg, var(--copper), var(--gold));
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .4s ease;
+  }
+  .card:hover{
+    transform:translateY(-8px);
+    border-color:var(--copper-dim);
+    box-shadow:0 24px 48px -20px rgba(0,0,0,.75);
+  }
+  .card:hover::after{transform:scaleX(1);}
+  .card-icon{
+    width:46px;height:46px;
+    border:1px solid var(--line);
+    border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--copper-light);
+    margin-bottom:22px;
+    transition:border-color .3s, background .3s;
+  }
+  .card:hover .card-icon{border-color:var(--copper);background:rgba(193,125,69,.08);}
+  .card-icon svg{width:22px;height:22px;}
+  .card h3{
+    font-size:1.12rem;
+    color:var(--text);
+    margin-bottom:10px;
+    font-weight:600;
+  }
+  .card p{
+    font-size:.89rem;
+    color:var(--text-muted);
+    line-height:1.65;
+  }
+
+  /* ---------- testimonials ---------- */
+  .testimonials{padding:110px 0;background:var(--bg-panel);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);}
+  .testi-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:22px;
+    margin-bottom:46px;
+  }
+  .testi-card{
+    background:var(--bg-panel-2);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:28px 26px;
+  }
+  .testi-stars{
+    color:var(--copper-light);
+    font-size:.85rem;
+    letter-spacing:.15em;
+    margin-bottom:16px;
+  }
+  .testi-quote{
+    font-size:.92rem;
+    color:var(--text);
+    line-height:1.65;
+    margin-bottom:18px;
+  }
+  .testi-author{
+    font-family:var(--mono);
+    font-size:.72rem;
+    color:var(--text-dim);
+    letter-spacing:.03em;
+  }
+  .testi-cta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    flex-wrap:wrap;
+    padding:24px 26px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--bg-panel);
+  }
+  .testi-cta p{
+    color:var(--text-muted);
+    font-size:.95rem;
+  }
+
+  /* ---------- schedule ---------- */
+  .schedule{padding:110px 0;}
+  .schedule-wrap{
+    display:grid;
+    grid-template-columns:.85fr 1.15fr;
+    gap:60px;
+    align-items:center;
+  }
+  .schedule-note{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:26px;
+    padding:16px 18px;
+    background:rgba(193,125,69,.07);
+    border:1px solid var(--copper-dim);
+    border-radius:9px;
+    font-size:.88rem;
+    color:var(--text);
+  }
+  .schedule-note svg{width:20px;height:20px;color:var(--copper-light);flex-shrink:0;}
+  .schedule-note strong{color:var(--copper-light);}
+
+  .week-grid{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .day-row{
+    display:grid;
+    grid-template-columns:44px 1fr auto;
+    align-items:center;
+    gap:16px;
+    padding:14px 18px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:9px;
+    transition:border-color .3s, background .3s;
+  }
+  .day-row.today{
+    border-color:var(--copper);
+    background:rgba(193,125,69,.09);
+  }
+  .day-abbr{
+    font-family:var(--mono);
+    font-size:.78rem;
+    color:var(--text-dim);
+    letter-spacing:.05em;
+  }
+  .day-row.today .day-abbr{color:var(--copper-light);font-weight:600;}
+  .day-name{font-size:.92rem;color:var(--text);}
+  .day-hours{
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--text-muted);
+    text-align:right;
+  }
+  .day-hours.closed{color:var(--text-dim);}
+  .today-tag{
+    font-family:var(--mono);
+    font-size:.6rem;
+    letter-spacing:.08em;
+    color:var(--bg);
+    background:var(--copper-light);
+    padding:2px 7px;
+    border-radius:4px;
+    margin-left:8px;
+  }
+
+  /* ---------- contact / cta ---------- */
+  .cta-section{
+    padding:120px 0;
+    text-align:center;
+  }
+  .cta-section h2{
+    font-size:clamp(2rem, 4.4vw, 3.2rem);
+    max-width:680px;
+    margin:0 auto 20px;
+  }
+  .cta-section p{
+    color:var(--text-muted);
+    max-width:460px;
+    margin:0 auto 40px;
+    font-size:1.02rem;
+  }
+  .cta-buttons{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:44px;
+  }
+  .contact-methods{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:34px;
+    flex-wrap:wrap;
+  }
+  .contact-divider{
+    width:1px;
+    height:34px;
+    background:var(--line);
+  }
+  .phone-display{
+    font-family:var(--mono);
+    font-size:1.3rem;
+    color:var(--copper-light);
+    letter-spacing:.03em;
+    transition:opacity .25s ease;
+  }
+  a.phone-display:hover{opacity:.75;}
+  .phone-display span{color:var(--text-dim);font-size:.8rem;display:block;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px;}
+
+  /* ---------- footer ---------- */
+  footer{
+    padding:40px 0;
+    border-top:1px solid var(--line-soft);
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+    font-size:.8rem;
+    color:var(--text-dim);
+  }
+  .footer-inner .logo{font-size:1.1rem;}
+
+  /* ---------- floating whatsapp ---------- */
+  .wa-float{
+    position:fixed;
+    bottom:28px;
+    right:28px;
+    z-index:200;
+    width:78px;height:78px;
+    border-radius:50%;
+    background:#25D366;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 30px -6px rgba(37,211,102,.55);
+    cursor:pointer;
+    transition:transform .25s ease;
+    animation:waBreathe 2.8s ease-in-out infinite;
+  }
+  .wa-float:hover{transform:scale(1.08);}
+  .wa-float svg{width:39px;height:39px;fill:#0a0a0b;}
+  .wa-float::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:#25D366;
+    animation:wapulse 2.8s ease-out infinite;
+    z-index:-1;
+  }
+  @keyframes wapulse{
+    0%{opacity:.5;transform:scale(1);}
+    100%{opacity:0;transform:scale(1.8);}
+  }
+  @keyframes waBreathe{
+    0%,100%{box-shadow:0 10px 30px -6px rgba(37,211,102,.55);}
+    50%{box-shadow:0 10px 34px -4px rgba(37,211,102,.8);}
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:980px){
+    .hero{grid-template-columns:1fr;padding-top:150px;}
+    .app-shots{grid-template-columns:1fr;}
+    .card-grid{grid-template-columns:repeat(2, 1fr);}
+    .testi-grid{grid-template-columns:1fr;}
+    .schedule-wrap{grid-template-columns:1fr;gap:44px;}
+  }
+  @media (max-width:760px){
+    nav ul{
+      position:fixed;
+      top:76px;left:0;right:0;
+      flex-direction:column;
+      background:rgba(0,0,0,.98);
+      backdrop-filter:blur(14px);
+      padding:24px 28px;
+      gap:20px;
+      border-bottom:1px solid var(--line-soft);
+      transform:translateY(-130%);
+      transition:transform .35s ease;
+    }
+    nav ul.open{transform:translateY(0);}
+    .menu-toggle{display:flex;}
+    .nav-right .btn-primary.btn-sm{display:none;}
+    .card-grid{grid-template-columns:1fr;}
+    .hero-ctas{flex-direction:column;align-items:stretch;}
+    .hero-ctas .btn{justify-content:center;}
+    .trust-strip{flex-direction:column;gap:14px;}
+    .fps-compare{flex-wrap:wrap;}
+    .day-row{grid-template-columns:36px 1fr auto;padding:12px 14px;}
+    .section-head{margin-bottom:36px;}
+    .testi-cta{flex-direction:column;align-items:stretch;text-align:center;}
+    .app-price{flex-direction:column;align-items:stretch;text-align:center;}
+    .contact-methods{flex-direction:column;gap:20px;}
+    .contact-divider{display:none;}
+    .wa-float{width:66px;height:66px;bottom:20px;right:20px;}
+    .wa-float svg{width:33px;height:33px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav-inner">
+    <div class="logo"><span class="logo-mark">AV</span> <span>Tweks</span></div>
+    <nav>
+      <ul id="navList">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#optimizer">AV Optimizer</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#horarios">Horarios</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <a class="btn btn-primary btn-sm" href="https://wa.me/5493464519276?text=Hola%20AV%20Tweks%2C%20quiero%20agendar%20un%20turno%20para%20optimizar%20mi%20PC" target="_blank" rel="noopener">Agendar turno</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section id="inicio">
+  <div class="container hero">
+    <div>
+      <div class="eyebrow reveal">Optimización de PC · Gaming competitivo</div>
+      <h1 class="reveal reveal-delay-1">El límite no es tu placa de video.<br>Es la <em>configuración</em>.</h1>
+      <p class="lead reveal reveal-delay-2">4 años optimizando PCs para juegos competitivos. Reviso Windows, BIOS y el sistema para que tu equipo rinda lo que puede rendir, sin comprar nada nuevo.</p>
+      <div class="hero-ctas reveal reveal-delay-3">
+        <a class="btn btn-primary" href="https://wa.me/5493464519276?text=Hola%20AV%20Tweks%2C%20quiero%20agendar%20un%20turno%20para%20optimizar%20mi%20PC" target="_blank" rel="noopener">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0012.05 4a7.94 7.94 0 00-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 003.85 1h0a7.94 7.94 0 007.94-7.94 7.9 7.9 0 00-2.4-5.64zm-5.55 12.2h0a6.6 6.6 0 01-3.36-.92l-.24-.14-2.5.65.67-2.44-.16-.25a6.6 6.6 0 1112.28-3.5 6.6 6.6 0 01-6.7 6.6zm3.6-4.94c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.5.64-.62.77-.23.15-.43.05a5.4 5.4 0 01-1.6-.98 6 6 0 01-1.1-1.37c-.12-.2 0-.3.09-.4.09-.1.2-.23.3-.35.1-.12.13-.2.2-.34.06-.13.03-.25 0-.35s-.44-1.06-.6-1.45c-.16-.38-.32-.33-.44-.33h-.38a.72.72 0 00-.52.24 2.2 2.2 0 00-.68 1.63c0 .96.7 1.9.8 2 .1.13 1.37 2.1 3.33 2.94.46.2.83.32 1.11.4.47.15.9.13 1.24.08.38-.06 1.17-.48 1.33-.94.17-.46.17-.85.12-.94-.05-.1-.18-.15-.38-.25z"/></svg>
+          Agendar por WhatsApp
+        </a>
+        <a class="btn btn-ghost" href="#servicios">Ver servicios</a>
+      </div>
+      <div class="trust-strip reveal reveal-delay-4">
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3 6 6 1-4.5 4.3L17.5 20 12 16.5 6.5 20l1-6.7L3 9l6-1z"/></svg>4 años de experiencia</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Incluye ajuste de BIOS</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Se trabaja con turno</div>
+      </div>
+    </div>
+
+    <div class="terminal reveal reveal-delay-2">
+      <div class="terminal-bar">
+        <span class="terminal-dot"></span><span class="terminal-dot"></span><span class="terminal-dot"></span>
+        <span class="terminal-title">avtweks_optimizer — sesión activa</span>
+      </div>
+      <div class="terminal-body" id="termBody">
+        <div class="term-line"><span class="prompt">$</span><span>Escaneando procesos en segundo plano...</span></div>
+        <div class="term-line"><span class="prompt">$</span><span>Ajustando plan de energía: <span class="ok">rendimiento máximo</span></span></div>
+        <div class="term-line"><span class="prompt">$</span><span>Optimizando prioridades de CPU en juego activo</span></div>
+        <div class="term-line"><span class="prompt">$</span><span>Limpiando archivos temporales: <span class="ok">2.4 GB liberados</span></span></div>
+        <div class="term-line"><span class="prompt">$</span><span>Verificando configuración de BIOS...</span></div>
+        <div class="term-line"><span class="prompt">$</span><span class="ok">Sistema listo.</span><span class="cursor"></span></div>
+
+        <div class="fps-compare">
+          <div class="fps-block before">
+            <div class="fps-num" id="fpsBefore">0</div>
+            <div class="fps-label">FPS antes</div>
+          </div>
+          <div class="fps-arrow">→</div>
+          <div class="fps-block after">
+            <div class="fps-num" id="fpsAfter">0</div>
+            <div class="fps-label">FPS después</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="app-section" id="optimizer">
+  <div class="container">
+    <div class="app-head reveal">
+      <div class="eyebrow">Software propio</div>
+      <h2 class="section-title">AV Optimizer</h2>
+      <p class="section-sub app-lead">Optimizá Windows para obtener más rendimiento, menos latencia y un sistema más limpio, sin tener que modificar configuraciones manualmente.</p>
+
+      <ul class="app-features">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/></svg>Tweaks de Windows y Registro orientados al rendimiento</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/></svg>Optimización de CPU, GPU, red y latencia</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/></svg>Limpieza profunda</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/></svg>Debloat de Windows y servicios en segundo plano</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7L9 18l-5-5"/></svg>Ajustes avanzados del sistema y timers</li>
+      </ul>
+
+      <div class="app-price">
+        <div>
+          <div class="app-price-num">15 USD</div>
+          <div class="app-price-note">Pago único · tuya para siempre · sin suscripción</div>
+        </div>
+        <a class="btn btn-primary" href="https://wa.me/5493464519276?text=Hola%20AV%20Tweks%2C%20quiero%20comprar%20el%20AV%20Optimizer" target="_blank" rel="noopener">Quiero el AV Optimizer</a>
+      </div>
+    </div>
+
+    <div class="app-shots">
+      <div class="app-shot reveal reveal-delay-1">
+        <div class="app-mock-bar">
+          <div class="app-mock-logo">AV</div>
+          <span class="terminal-title">AV Optimizer — Optimizaciones</span>
+        </div>
+        <img src="av-optimizer-optimizaciones.png" alt="Panel de optimizaciones de AV Optimizer">
+      </div>
+      <div class="app-shot reveal reveal-delay-2">
+        <div class="app-mock-bar">
+          <div class="app-mock-logo">AV</div>
+          <span class="terminal-title">AV Optimizer — Panel principal</span>
+        </div>
+        <img src="av-optimizer-panel.png" alt="Panel principal de AV Optimizer">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="servicios">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Servicios</div>
+      <h2 class="section-title">Qué hago con tu PC</h2>
+      <p class="section-sub">Cuatro servicios, cada uno apunta a algo distinto: software, sistema operativo, archivos acumulados o configuración de fábrica.</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card reveal">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
+        <h3>Optimización Básica</h3>
+        <p>Plan de energía, procesos en segundo plano y prioridades de CPU. Para cuando notás caídas de FPS o el input se siente lento.</p>
+      </div>
+      <div class="card reveal reveal-delay-1">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 12h4l2-7 4 14 2-7h4"/></svg></div>
+        <h3>Optimización Avanzada</h3>
+        <p>Ajuste fino de latencia, red y renderizado a nivel de sistema. Pensada para sacarle todo a un equipo de gaming competitivo, incluye limpieza y BIOS.</p>
+      </div>
+      <div class="card reveal reveal-delay-2">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg></div>
+        <h3>Limpieza de Windows</h3>
+        <p>Saco archivos basura, bloatware y programas que corren en segundo plano sin que te des cuenta.</p>
+      </div>
+      <div class="card reveal reveal-delay-3">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/></svg></div>
+        <h3>Limpieza y ajuste de BIOS</h3>
+        <p>XMP/EXPO, timings de memoria, C-States, PBO y más. Rendimiento real.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials" id="opiniones">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">Opiniones</div>
+      <h2 class="section-title">Lo que dicen después de optimizar</h2>
+      <p class="section-sub">Así se va viendo el formato. Se van a ir sumando reseñas reales de clientes.</p>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Subí de 60 a más de 140 FPS en Valorant sin cambiar una sola pieza. Se nota al toque en el input."</p>
+        <div class="testi-author">— PC Ryzen 5 + RTX 3060</div>
+      </div>
+      <div class="testi-card reveal reveal-delay-1">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"No sabía que la BIOS influía tanto. Después del ajuste dejó de trabarse en partidas largas."</p>
+        <div class="testi-author">— Notebook gaming</div>
+      </div>
+      <div class="testi-card reveal reveal-delay-2">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Todo por WhatsApp, sin vueltas. Coordinamos el turno y en el día ya tenía la PC lista."</p>
+        <div class="testi-author">— Setup competitivo</div>
+      </div>
+    </div>
+
+    <div class="testi-cta reveal reveal-delay-3">
+      <p>¿Ya te optimicé la PC? Contame cómo te fue y lo sumo acá.</p>
+      <a class="btn btn-ghost" href="https://wa.me/5493464519276?text=Hola%20AV%20Tweks%2C%20quiero%20contarte%20mi%20experiencia%20con%20el%20servicio" target="_blank" rel="noopener">Dejar mi experiencia</a>
+    </div>
+  </div>
+</section>
+
+<section class="schedule" id="horarios">
+  <div class="container">
+    <div class="schedule-wrap">
+      <div class="reveal">
+        <div class="eyebrow">Horarios</div>
+        <h2 class="section-title">Cuándo te puedo atender</h2>
+        <p class="section-sub">Cada PC lleva su tiempo, así que trabajo con turnos fijos, sin cruces.</p>
+        <div class="schedule-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg>
+          <div><strong>Se trabaja con turno previo.</strong> Coordiná día y horario por WhatsApp antes de acercar tu PC.</div>
+        </div>
+      </div>
+
+      <div class="week-grid reveal reveal-delay-1" id="weekGrid">
+        <div class="day-row" data-day="1"><span class="day-abbr">LUN</span><span class="day-name">Lunes</span><span class="day-hours">10:00 – 19:00</span></div>
+        <div class="day-row" data-day="2"><span class="day-abbr">MAR</span><span class="day-name">Martes</span><span class="day-hours">10:00 – 19:00</span></div>
+        <div class="day-row" data-day="3"><span class="day-abbr">MIÉ</span><span class="day-name">Miércoles</span><span class="day-hours">10:00 – 19:00</span></div>
+        <div class="day-row" data-day="4"><span class="day-abbr">JUE</span><span class="day-name">Jueves</span><span class="day-hours">10:00 – 19:00</span></div>
+        <div class="day-row" data-day="5"><span class="day-abbr">VIE</span><span class="day-name">Viernes</span><span class="day-hours">10:00 – 15:00</span></div>
+        <div class="day-row" data-day="6"><span class="day-abbr">SÁB</span><span class="day-name">Sábado</span><span class="day-hours closed">Cerrado</span></div>
+        <div class="day-row" data-day="0"><span class="day-abbr">DOM</span><span class="day-name">Domingo</span><span class="day-hours closed">Cerrado</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="contacto">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow" style="justify-content:center;">Contacto</div>
+      <h2>¿Le damos más FPS a tu PC?</h2>
+      <p>Contame qué equipo tenés y qué jugás. Te digo qué se puede mejorar y coordinamos el turno.</p>
+      <div class="cta-buttons">
+        <a class="btn btn-primary" href="https://wa.me/5493464519276?text=Hola%20AV%20Tweks%2C%20quiero%20agendar%20un%20turno%20para%20optimizar%20mi%20PC" target="_blank" rel="noopener">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0012.05 4a7.94 7.94 0 00-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 003.85 1h0a7.94 7.94 0 007.94-7.94 7.9 7.9 0 00-2.4-5.64zm-5.55 12.2h0a6.6 6.6 0 01-3.36-.92l-.24-.14-2.5.65.67-2.44-.16-.25a6.6 6.6 0 1112.28-3.5 6.6 6.6 0 01-6.7 6.6zm3.6-4.94c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.5.64-.62.77-.23.15-.43.05a5.4 5.4 0 01-1.6-.98 6 6 0 01-1.1-1.37c-.12-.2 0-.3.09-.4.09-.1.2-.23.3-.35.1-.12.13-.2.2-.34.06-.13.03-.25 0-.35s-.44-1.06-.6-1.45c-.16-.38-.32-.33-.44-.33h-.38a.72.72 0 00-.52.24 2.2 2.2 0 00-.68 1.63c0 .96.7 1.9.8 2 .1.13 1.37 2.1 3.33 2.94.46.2.83.32 1.11.4.47.15.9.13 1.24.08.38-.06 1.17-.48 1.33-.94.17-.46.17-.85.12-.94-.05-.1-.18-.15-.38-.25z"/></svg>
+          Escribir por WhatsApp
+        </a>
+        <a class="btn btn-ghost" href="https://x.com/ALvaV1" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-7.2L4.5 22H1.4l8.1-9.3L1 2h7.2l5 6.6L18.9 2zm-1.2 18h1.7L7.4 3.9H5.6L17.7 20z"/></svg>
+          Seguir en X
+        </a>
+      </div>
+      <div class="contact-methods">
+        <div class="phone-display">
+          <span>Teléfono / WhatsApp</span>
+          346 451-9276
+        </div>
+        <div class="contact-divider"></div>
+        <div class="phone-display">
+          <span>Discord</span>
+          alvav1
+        </div>
+        <div class="contact-divider"></div>
+        <a class="phone-display" href="https://x.com/ALvaV1" target="_blank" rel="noopener">
+          <span>X (Twitter)</span>
+          @ALvaV1
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-inner">
+    <div class="logo"><span class="logo-mark">AV</span> <span>Tweks</span></div>
+    <div>Optimización de PC para gaming competitivo — Rosario, Santa Fe</div>
+    <div>© 2026 AV Tweks. Todos los derechos reservados.</div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5493464519276?text=Hola%20AV%20Tweks%2C%20quiero%20agendar%20un%20turno%20para%20optimizar%20mi%20PC" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.6 6.32A7.85 7.85 0 0012.05 4a7.94 7.94 0 00-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 003.85 1h0a7.94 7.94 0 007.94-7.94 7.9 7.9 0 00-2.4-5.64zm-5.55 12.2h0a6.6 6.6 0 01-3.36-.92l-.24-.14-2.5.65.67-2.44-.16-.25a6.6 6.6 0 1112.28-3.5 6.6 6.6 0 01-6.7 6.6zm3.6-4.94c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.5.64-.62.77-.23.15-.43.05a5.4 5.4 0 01-1.6-.98 6 6 0 01-1.1-1.37c-.12-.2 0-.3.09-.4.09-.1.2-.23.3-.35.1-.12.13-.2.2-.34.06-.13.03-.25 0-.35s-.44-1.06-.6-1.45c-.16-.38-.32-.33-.44-.33h-.38a.72.72 0 00-.52.24 2.2 2.2 0 00-.68 1.63c0 .96.7 1.9.8 2 .1.13 1.37 2.1 3.33 2.94.46.2.83.32 1.11.4.47.15.9.13 1.24.08.38-.06 1.17-.48 1.33-.94.17-.46.17-.85.12-.94-.05-.1-.18-.15-.38-.25z"/></svg>
+</a>
+
+<script>
+  // ---------- reveal on scroll ----------
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  // ---------- mobile menu ----------
+  const menuToggle = document.getElementById('menuToggle');
+  const navList = document.getElementById('navList');
+  menuToggle.addEventListener('click', () => navList.classList.toggle('open'));
+  navList.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navList.classList.remove('open')));
+
+  // ---------- terminal typing sequence ----------
+  const termLines = document.querySelectorAll('.term-line');
+  function playTerminal(){
+    termLines.forEach(l => l.classList.remove('shown'));
+    termLines.forEach((line, i) => {
+      setTimeout(() => line.classList.add('shown'), i * 480);
+    });
+  }
+  let terminalPlayed = false;
+  const terminalEl = document.querySelector('.terminal');
+  const termObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !terminalPlayed) {
+        terminalPlayed = true;
+        playTerminal();
+        animateFps();
+      }
+    });
+  }, { threshold: 0.4 });
+  if (terminalEl) termObserver.observe(terminalEl);
+
+  // ---------- fps counter animation ----------
+  function animateFps(){
+    const before = document.getElementById('fpsBefore');
+    const after = document.getElementById('fpsAfter');
+    const targets = { before: 52, after: 144 };
+    const duration = 1400;
+    const start = performance.now();
+    function step(now){
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      before.textContent = Math.round(targets.before * ease);
+      after.textContent = Math.round(targets.after * ease);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ---------- highlight current day ----------
+  const todayIndex = new Date().getDay(); // 0 = domingo
+  document.querySelectorAll('.day-row').forEach(row => {
+    if (parseInt(row.dataset.day) === todayIndex) {
+      row.classList.add('today');
+      const nameEl = row.querySelector('.day-name');
+      const tag = document.createElement('span');
+      tag.className = 'today-tag';
+      tag.textContent = 'HOY';
+      nameEl.appendChild(tag);
+    }
+  });
+</script>
+
+</body>
+</html>
